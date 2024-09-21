@@ -1,8 +1,11 @@
-let students = JSON.parse(localStorage.getItem("students")) || [];
-let isTeacher = false; // O'qituvchi kirganligini nazorat qilish
+let students = [];
+let isTeacher = false;
 
 // Talabalar jadvalini ko'rsatish
-function renderTable(filteredStudents = students) {
+async function renderTable(filteredStudents = students) {
+  const response = await fetch('http://localhost:5000/students');
+  students = await response.json(); // Backenddan talabalarni olish
+
   const tableBody = document.getElementById("studentTable");
   tableBody.innerHTML = ""; // Jadvalni tozalash
 
@@ -10,33 +13,27 @@ function renderTable(filteredStudents = students) {
   filteredStudents.sort((a, b) => a.name.localeCompare(b.name));
 
   filteredStudents.forEach((student, index) => {
-    const avgGrade = Math.round(
-      (student.grades.reduce((a, b) => a + b, 0) /
-        (student.grades.length * 3)) *
-        100
-    );
+    const avgGrade = Math.round((student.grades.reduce((a, b) => a + b, 0) / (student.grades.length * 3)) * 100);
     let row = `<tr class="border-b border-gray-200 hover:bg-gray-100">
-                    <td class="py-3 px-6 text-left">${student.group}</td>
-                    <td class="py-3 px-6 text-left">${student.name}</td>
-                    <td class="py-3 px-6 text-left">${student.task}</td>
-                    <td class="py-3 px-6 text-left">`;
+                  <td class="py-3 px-6 text-left">${student.group}</td>
+                  <td class="py-3 px-6 text-left">${student.name}</td>
+                  <td class="py-3 px-6 text-left">${student.task}</td>
+                  <td class="py-3 px-6 text-left">`;
 
     // Baholarni rang bilan ajratib ko'rsatish
-    student.grades.forEach((grade) => {
-      row += `<span class="px-2 py-1 text-white rounded ${getGradeColor(
-        grade
-      )}">${grade}</span> `;
+    student.grades.forEach(grade => {
+      row += `<span class="px-2 py-1 text-white rounded ${getGradeColor(grade)}">${grade}</span> `;
     });
 
     row += `</td>
-                    <td class="py-3 px-6 text-left">${avgGrade}%</td>`;
+              <td class="py-3 px-6 text-left">${avgGrade}%</td>`;
 
     // Harakatlar faqat o'qituvchi uchun ko'rinadi
     if (isTeacher) {
       row += `<td class="py-3 px-6 text-left">
-                      <button class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline" onclick="editStudent(${index})">Tahrirlash</button>
-                      <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline" onclick="deleteStudent(${index})">O'chirish</button>
-                  </td>`;
+                <button class="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline" onclick="editStudent(${index})">Tahrirlash</button>
+                <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline" onclick="deleteStudent(${student._id})">O'chirish</button>
+              </td>`;
     }
     row += `</tr>`;
     tableBody.innerHTML += row;
@@ -46,16 +43,11 @@ function renderTable(filteredStudents = students) {
 // Baholar rangini aniqlash funksiyasi
 function getGradeColor(grade) {
   switch (grade) {
-    case 0:
-      return "bg-red-500"; // Qizil
-    case 1:
-      return "bg-yellow-500"; // Sarxil
-    case 2:
-      return "bg-green-500"; // Yashil
-    case 3:
-      return "bg-blue-500"; // Moviy
-    default:
-      return "bg-gray-500"; // Xato baho
+    case 0: return "bg-red-500"; // Qizil
+    case 1: return "bg-yellow-500"; // Sarxil
+    case 2: return "bg-green-500"; // Yashil
+    case 3: return "bg-blue-500"; // Moviy
+    default: return "bg-gray-500"; // Xato baho
   }
 }
 
@@ -77,15 +69,21 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
 });
 
 // Baholash formasi orqali talabani qo'shish
-document.getElementById("studentForm").addEventListener("submit", function (e) {
+document.getElementById("studentForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const group = document.getElementById("group").value;
   const name = document.getElementById("name").value;
   const task = document.getElementById("task").value;
   const grades = document.getElementById("grades").value.split(",").map(Number);
 
-  students.push({ group, name, task, grades });
-  localStorage.setItem("students", JSON.stringify(students));
+  await fetch('http://localhost:5000/students', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ group, name, task, grades }),
+  });
+
   renderTable(); // Jadvalni yangilash
   document.getElementById("studentForm").reset(); // Formani tozalash
 });
@@ -93,16 +91,17 @@ document.getElementById("studentForm").addEventListener("submit", function (e) {
 // Talabalarni filterlash
 document.getElementById("filterName").addEventListener("input", function () {
   const filterValue = this.value.toLowerCase();
-  const filteredStudents = students.filter((student) =>
+  const filteredStudents = students.filter(student =>
     student.name.toLowerCase().includes(filterValue)
   );
   renderTable(filteredStudents);
 });
 
-// Talabani tahrirlash funksiyasi (hozircha faqat o'chirish)
-function deleteStudent(index) {
-  students.splice(index, 1);
-  localStorage.setItem("students", JSON.stringify(students));
+// Talabani o'chirish funksiyasi
+async function deleteStudent(id) {
+  await fetch(`http://localhost:5000/students/${id}`, {
+    method: 'DELETE',
+  });
   renderTable(); // Jadvalni yangilash
 }
 
