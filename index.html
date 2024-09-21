@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Talabalar Baholash</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 p-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">Talabalar Baholash</h1>
+
+    <!-- Login form (faqat o'qituvchi uchun) -->
+    <form id="loginForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="username"
+          >Login</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          type="text"
+          id="username"
+          name="username"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="password"
+          >Parol</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          type="password"
+          id="password"
+          name="password"
+          required
+        />
+      </div>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit"
+      >
+        Kirish
+      </button>
+    </form>
+
+    <!-- Talaba qo'shish uchun forma (faqat o'qituvchilarga ko'rinadi) -->
+    <form
+      id="studentForm"
+      class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 hidden"
+    >
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="group"
+          >Guruh:</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          type="text"
+          id="group"
+          name="group"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="name"
+          >Ism Familiya:</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          type="text"
+          id="name"
+          name="name"
+          required
+        />
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="task"
+          >Vazifa nomi:</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          type="text"
+          id="task"
+          name="task"
+          required
+        />
+      </div>
+      <div class="mb-6">
+        <label class="block text-gray-700 text-sm font-bold mb-2" for="grades"
+          >Baholar (0, 1, 2, 3 — vergul bilan ajratilgan):</label
+        >
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          type="text"
+          id="grades"
+          name="grades"
+          required
+        />
+      </div>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        type="submit"
+      >
+        Qo'shish
+      </button>
+    </form>
+
+    <!-- Filter form -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="filterName"
+        >Ism bo'yicha filter:</label
+      >
+      <input
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        type="text"
+        id="filterName"
+        placeholder="Ismni kiriting..."
+      />
+    </div>
+
+    <!-- Talabalar jadvali -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white shadow-md rounded">
+        <thead
+          class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal"
+        >
+          <tr>
+            <th class="py-3 px-6 text-left">Guruh</th>
+            <th class="py-3 px-6 text-left">Ism Familiya</th>
+            <th class="py-3 px-6 text-left">Vazifa nomi</th>
+            <th class="py-3 px-6 text-left">Baho</th>
+            <th class="py-3 px-6 text-left">O'rtacha Baho (%)</th>
+            <th class="py-3 px-6 text-left">Harakatlar</th>
+          </tr>
+        </thead>
+        <tbody
+          id="studentTable"
+          class="text-gray-600 text-sm font-light"
+        ></tbody>
+      </table>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
