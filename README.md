@@ -1,4 +1,4 @@
-# WEB DUNYOSI
+# Talabalar baholash
 Front end kurs
 
 - Html5
